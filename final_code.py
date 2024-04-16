@@ -38,10 +38,10 @@ class cantina:
         return self.LD
     def vote(self): # Method determining unknown attribute of new point
     # (simple majority vote)
-        if self.LD.count("No")>self.LD.count("Yes"):
-            print(f"New alien of classificaton {self.np} selected is not dangerous...")
+        if self.LD.count(0)>self.LD.count(1):
+            print(f"New alien of classificaton {self.np} is not dangerous...")
         else:
-            print(f"New alien of classificaton {self.np} selected is dangerous...")
+            print(f"New alien of classificaton {self.np} is dangerous...")
       
 # Function for computing distances between two points 
 # (can take infinitely as many coordinates for every point)
@@ -60,10 +60,20 @@ def main():
     # Classification norm dictionary
     dict_class={"Yellow":1,"Green":2,"Red":3,"Short":1,"Average":2,"Tall":3,"Light":1,"Normal":2,"Heavy":3,"Pairs":2,"Single":1}
     
-    # Reading table from file and seperating data (still table form)
+    # Reading table from file
     data_file=pandas.read_csv("project_table.csv")
+    
+    # Extracting TBD list from the table
     list_keys=list(data_file["Dangerous"])
-    # TBD attributes into array
+    
+    # Binary classification of TBD list "Yes"/"No" -- 1/0
+    for i in range(len(list_keys)):
+        if list_keys[i]=="No":
+            list_keys[i]=0
+        else:
+            list_keys[i]=1
+            
+    # Getting table seperated from TBD attribute list
     data_file=data_file.loc[:,data_file.columns != "Dangerous"] 
     
     # All attributes from table of known attributes 
@@ -84,13 +94,15 @@ def main():
     new_point=[]
     for i in range(4):
         att=str(input("Insert variation of attribute ("+str(i+1)+") >>> "))
-        while att not in dict_class.keys():
+        while att not in dict_class.keys(): 
+        # if variation given not available (so not it classification dictionary keys)
             att=str(input("Insert available variation of attribute ("+str(i+1)+") >>> "))
         new_point.append(att)
     print("\nThis is the alien to use for implementation >>> "+str(new_point))
     print("Note that if the attributes are not in the above specified order, the algorithm will consider it accurate and use the assigned variation classification although not appropriate...\n")
     k=int(input("Now choose the range k of neighbors to comapre created alien with (max 8) >>> "))
     while k>len(list_points) or k<1:
+    # for range k: max can be number of data elems, min can be the single closest neighbor
         k=int(input("Unavailable k: Choose a k between 1 and 8 >>> "))
     print("Implementing KNN for new alien "+str(new_point)+" with neighbor range "+str(k)+"...\n")
     
